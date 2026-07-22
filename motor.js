@@ -1,8 +1,10 @@
 // ==========================================================================
-// CONFIGURACIÓN PRO: ENLACE EN VIVO DE TU GOOGLE SHEET (FORMATO DATOS CSV)
+// CONFIGURACIÓN PRO: ENLACE EN VIVO DE TU GOOGLE SHEET CON PROXY ANTI-CORS
 // ==========================================================================
-const GOOGLE_SHEET_CSV_URL = "https://api.allorigins.win/raw?url=" + encodeURIComponent("https://docs.google.com/spreadsheets/d/e/2PACX-1vSkVKm6lOMbZvAxVV_t0SXpXbln6AC67ebiTEc9how0g4ccKvhcZdbZtDoO7eIdla98b1bkYj6reDDo/pub?output=csv");
+const HOJA_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSkVKm6lOMbZvAxVV_t0SXpXbln6AC67ebiTEc9how0g4ccKvhcZdbZtDoO7eIdla98b1bkYj6reDDo/pub?output=csv";
 
+// Usamos corsproxy.io para evadir la restricción del navegador
+const GOOGLE_SHEET_CSV_URL = "https://corsproxy.io/?" + encodeURIComponent(HOJA_URL);
 // Banderas oficiales por País
 const BANDERAS_PAISES = {
     "ARGENTINA": "https://flagcdn.com/w40/ar.png",
