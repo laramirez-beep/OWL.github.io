@@ -1,4 +1,3 @@
-function initializeFiltrosYVistasCustom() {
 // ==========================================================================
 // CONFIGURACIÓN PRO: ENLACE EN VIVO DE TU GOOGLE SHEET (FORMATO DATOS CSV)
 // ==========================================================================
@@ -270,21 +269,19 @@ document.addEventListener("click", () => {
 });
 
 // ==========================================================================
-// 🔥 RENDERIZADO DINÁMICO Y REACTIVO DE LAS TARJETAS DE PAÍS
+// RENDERIZADO DINÁMICO Y REACTIVO DE LAS TARJETAS DE PAÍS
 // ==========================================================================
 function renderizarTarjetasPaises(listaFiltradaSegunAtributos) {
     const contenedor = document.getElementById("contenedor-tarjetas-paises");
     if (!contenedor) return;
     contenedor.innerHTML = "";
 
-    // 1. Obtener la lista completa de todos los países existentes en la BD global
     const todosLosPaisesSet = new Set();
     contenedoresGlobales.forEach(c => {
         const p = c.pais && c.pais !== "NO ESP." ? c.pais : "OTROS";
         todosLosPaisesSet.add(p);
     });
 
-    // 2. Agrupar conteos únicamente con los elementos que pasan los filtros actuales
     const resumenPaisesFiltrado = {};
     todosLosPaisesSet.forEach(p => {
         resumenPaisesFiltrado[p] = { total: 0, libres: 0, vendidos: 0 };
@@ -312,7 +309,6 @@ function renderizarTarjetasPaises(listaFiltradaSegunAtributos) {
         const card = document.createElement("div");
         card.className = "tarjeta-pais-card";
 
-        // Marcado de foco por selección activa de país
         if (paisUpper !== "TODOS LOS PAÍSES" && paisUpper !== "TODOS") {
             if (paisNombre.toUpperCase().includes(paisUpper)) {
                 card.classList.add("pais-seleccionado-activo");
@@ -321,7 +317,6 @@ function renderizarTarjetasPaises(listaFiltradaSegunAtributos) {
             }
         }
 
-        // Si el país no tiene ninguna unidad disponible bajo el filtro actual, atenuarlo visualmente
         if (stats.total === 0) {
             card.classList.add("pais-opaco");
         }
@@ -386,8 +381,6 @@ function filtrarInventario(origenCambio) {
         if (wrapperLoc) wrapperLoc.querySelector(".custom-select-label").innerText = "Todas las Locaciones";
     }
 
-    // 🔥 1. Filtrar lista por los atributos secundarios (Texto, Locación, Tamaño, Etapa, Prioridad, Estado Venta)
-    // omitiendo el filtro de país estricto para recalcular las tarjetas de país
     const listaFiltradaSinPais = contenedoresGlobales.filter(c => {
         const coincideTexto = c.serial.toLowerCase().includes(textoBusqueda) || 
                               c.opGateBuy.toLowerCase().includes(textoBusqueda);
@@ -412,10 +405,8 @@ function filtrarInventario(origenCambio) {
         return coincideTexto && coincideLocacion && coincideTamano && coincideEtapa && coincideOportunidad && coincidePrioridad;
     });
 
-    // 🔥 2. Renderizar Tarjetas de País con la lista reactiva
     renderizarTarjetasPaises(listaFiltradaSinPais); 
 
-    // 🔥 3. Aplicar el filtro de País estricto para Lotes y Tabla Maestra
     const filtradosFinales = listaFiltradaSinPais.filter(c => {
         const coincidePais = (paisVal.includes("todos los pa") || c.pais.toLowerCase().includes(paisVal));
         if (loteSeleccionadoLlave && c.opLeasing !== loteSeleccionadoLlave) {
@@ -629,7 +620,6 @@ function ejecutarLimpiezaGlobalDeFiltros() {
 
     document.getElementById("buscar-operacion").value = "";
     
-    // Resetear etiquetas visuales de los desplegables
     const pLabel = document.querySelector("#custom-select-pais .custom-select-label");
     const lLabel = document.querySelector("#custom-select-locacion .custom-select-label");
     const tLabel = document.querySelector("#custom-select-tamano .custom-select-label");
