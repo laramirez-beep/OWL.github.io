@@ -1,7 +1,10 @@
 // ==========================================================================
-// CONFIGURACIÓN PRO: ENLACE EN VIVO DE TU GOOGLE SHEET (FORMATO CSV)
+// CONFIGURACIÓN PRO: ENLACE CON PROXY ANTI-CORS PARA PAPAPARSE
 // ==========================================================================
-const HOJA_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSkVKm6lOMbZvAxVV_t0SXpXbln6AC67ebiTEc9how0g4ccKvhcZdbZtDoO7eIdla98b1bkYj6reDDo/pub?output=csv";
+const URL_ORIGINAL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSkVKm6lOMbZvAxVV_t0SXpXbln6AC67ebiTEc9how0g4ccKvhcZdbZtDoO7eIdla98b1bkYj6reDDo/pub?output=csv";
+
+// Envolvemos la URL con corsproxy.io para engañar al navegador y quitar la restricción CORS de Google
+const HOJA_URL = "https://corsproxy.io/?" + encodeURIComponent(URL_ORIGINAL);
 
 // Banderas oficiales por País
 const BANDERAS_PAISES = {
