@@ -1,10 +1,8 @@
 // ==========================================================================
-// CONFIGURACIÓN PRO: ENLACE EN VIVO CON PROXY ANTI-CORS (ALLORIGINS)
+// CONFIGURACIÓN OFICIAL DE API GOOGLE APPS SCRIPT
 // ==========================================================================
-const URL_SHEET_ORIGINAL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSkVKm6lOMbZvAxVV_t0SXpXbln6AC67ebiTEc9how0g4ccKvhcZdbZtDoO7eIdla98b1bkYj6reDDo/pub?output=csv";
-
-// Convertimos la llamada a través de un proxy que elimina los bloqueos CORS
-const HOJA_URL = "https://api.allorigins.win/raw?url=" + encodeURIComponent(URL_SHEET_ORIGINAL);
+// ⚠️ PEGA AQUÍ LA URL QUE COPIASTE DE GOOGLE APPS SCRIPT (Entre las comillas)
+const HOJA_URL = "https://script.google.com/macros/s/AKfycbzm6wKGmIXMo9Mu-t5vsALuiEuRthSqMy4Pj8OXwm_bT3twEI136oYGsVCNEXbT4VRmVg/exec";
 
 // Banderas oficiales por País
 const BANDERAS_PAISES = {
@@ -44,7 +42,6 @@ let contenedoresGlobales = [];
 let filtroEstadoVentaActual = "Todos"; 
 let loteSeleccionadoLlave = null; 
 
-// Valores de filtros activos
 let filtroPaisVal = "Todos los Países";
 let filtroLocacionVal = "Todas las Locaciones";
 let filtroTamanoVal = "Todos los Tamaños";
@@ -52,8 +49,8 @@ let filtroEtapaVal = "Todas las Etapas";
 let filtroPrioridadVal = "Todas las Prioridades";
 
 function parsearFechaExcel(textoFecha) {
-    if(!textoFecha || textoFecha === "--" || textoFecha.trim() === "") return null;
-    let limpia = textoFecha.replace(/\//g, "-").trim();
+    if(!textoFecha || textoFecha === "--" || String(textoFecha).trim() === "") return null;
+    let limpia = String(textoFecha).replace(/\//g, "-").trim();
     let partes = limpia.split("-");
     if (partes.length === 3 && partes[0].length <= 2) {
         return new Date(`${partes[2]}-${partes[1]}-${partes[0]}`);
@@ -89,103 +86,89 @@ function obtenerNivelPrioridadContenedor(c, fechaHoy) {
     return "ninguna";
 }
 
-// ==========================================================================
-// CARGA DE DATOS ROBUSTA CON PAPAPARSE + ALLORIGINS (ANTI-CORS)
-// ==========================================================================
-function cargarDatosDesdeGoogleSheets() {
-    if (typeof Papa === "undefined") {
-        console.error("PapaParse no está cargado.");
-        return;
-    }
+async function cargarDatosDesdeGoogleSheets() {
+    try {
+        const res = await fetch(HOJA_URL);
+        const lineas = await res.json();
+        
+        if (!lineas || lineas.length < 2) return;
 
-    Papa.parse(HOJA_URL, {
-        download: true,
-        header: false,
-        skipEmptyLines: true,
-        complete: function(results) {
-            const lineas = results.data;
-            if (!lineas || lineas.length < 2) return;
+        let idxOpLeasing = 0;
+        let idxOpGateBuy = 1;
+        let idxSerial = 2;
+        let idxTipo = 4;
+        let idxColor = 5;
+        let idxOrigen = 7;
+        let idxPais = 8;
+        let idxLocalizacion = 9;
+        let idxConfirmacion = 10;
+        let idxEta = 18;
+        let idxEstadoActual = 23;
+        let idxCicloTotal = 30;
+        let idxEtapa = 32;
 
-            let idxOpLeasing = 0;
-            let idxOpGateBuy = 1;
-            let idxSerial = 2;
-            let idxTipo = 4;
-            let idxColor = 5;
-            let idxOrigen = 7;
-            let idxPais = 8;
-            let idxLocalizacion = 9;
-            let idxConfirmacion = 10;
-            let idxEta = 18;
-            let idxEstadoActual = 23;
-            let idxCicloTotal = 30;
-            let idxEtapa = 32;
+        const listaProcesada = [];
 
-            const listaProcesada = [];
+        for (let i = 1; i < lineas.length; i++) {
+            const celdas = lineas[i].map(val => String(val || "").replace(/["']/g, "").trim());
+            if (celdas.length < 4) continue;
 
-            for (let i = 1; i < lineas.length; i++) {
-                const celdas = lineas[i].map(val => String(val || "").replace(/["']/g, "").trim());
-                if (celdas.length < 4) continue;
+            const opLeasing = celdas[idxOpLeasing] || "";
+            const opGateBuy = celdas[idxOpGateBuy] || "";         
+            const serialContenedor = celdas[idxSerial] ? celdas[idxSerial].replace(/\s+/g, '') : ""; 
 
-                const opLeasing = celdas[idxOpLeasing] || "";
-                const opGateBuy = celdas[idxOpGateBuy] || "";         
-                const serialContenedor = celdas[idxSerial] ? celdas[idxSerial].replace(/\s+/g, '') : ""; 
-
-                if (serialContenedor === "" || opLeasing.trim() === "" || serialContenedor.toUpperCase().includes("SERIAL") || serialContenedor.toUpperCase().includes("CONTENEDOR")) {
-                    continue; 
-                }
-
-                const tipo = celdas[idxTipo] || "40HC";           
-                const color = celdas[idxColor] || "No Especificado"; 
-                const origen = celdas[idxOrigen] || "CHINA";        
-                let paisRaw = celdas[idxPais] ? celdas[idxPais].toUpperCase().trim() : "NO ESP.";
-                
-                const localizacion = celdas[idxLocalizacion] || "Destino";
-                const confirmacion = celdas[idxConfirmacion] || "";      
-                const eta = celdas[idxEta] || "--";            
-                const estadoActualRaw = (celdas[idxEstadoActual] || "").toUpperCase().trim(); 
-                const cicloTotalDias = parseFloat(celdas[idxCicloTotal]) || 0;             
-                
-                let etapaExacta = celdas[idxEtapa] ? celdas[idxEtapa].trim() : "Origen";       
-                if (etapaExacta.toUpperCase().includes("DEPOSITO") || etapaExacta.toUpperCase().includes("DEPÓSITO")) {
-                    etapaExacta = "Espera Depósito Origen";
-                }
-
-                let estadoVenta = "Sin Vender";
-                if (opGateBuy.trim() !== "" && !opGateBuy.toUpperCase().includes("PENDIEN") && !opGateBuy.toUpperCase().includes("NO")) {
-                    estadoVenta = "Vendido";
-                } else if (estadoActualRaw === "RESERVADO" || estadoActualRaw === "ENTREGADO") {
-                    estadoVenta = "Vendido";
-                }
-
-                let clasificacionFisicaMapa = "DESTINO"; 
-                const estatusNormalizado = etapaExacta.toUpperCase();
-
-                if (estatusNormalizado.includes("MAR") || estatusNormalizado.includes("TRA")) {
-                    clasificacionFisicaMapa = "MAR";
-                } else if (estatusNormalizado.includes("ORIGEN") || estatusNormalizado.includes("ESPERA")) {
-                    clasificacionFisicaMapa = "ORIGEN";
-                } else if (estatusNormalizado.includes("DESTINO") || estatusNormalizado.includes("COMPLETADO")) {
-                    clasificacionFisicaMapa = "DESTINO";
-                }
-
-                listaProcesada.push({
-                    serial: serialContenedor, tipo, opLeasing, opGateBuy, origen, pais: paisRaw, localizacion, confirmacion, eta, color,
-                    estadoVenta, etapaFisicaExacta: etapaExacta, clasificacionFisicaMapa, cicloTotalDias
-                });
+            if (serialContenedor === "" || opLeasing.trim() === "" || serialContenedor.toUpperCase().includes("SERIAL") || serialContenedor.toUpperCase().includes("CONTENEDOR")) {
+                continue; 
             }
 
-            contenedoresGlobales = listaProcesada;
-            inicializarFiltrosYVistas();
-        },
-        error: function(err) {
-            console.error("Error al descargar los datos:", err);
+            const tipo = celdas[idxTipo] || "40HC";           
+            const color = celdas[idxColor] || "No Especificado"; 
+            const origen = celdas[idxOrigen] || "CHINA";        
+            let paisRaw = celdas[idxPais] ? celdas[idxPais].toUpperCase().trim() : "NO ESP.";
+            
+            const localizacion = celdas[idxLocalizacion] || "Destino";
+            const confirmacion = celdas[idxConfirmacion] || "";      
+            const eta = celdas[idxEta] || "--";            
+            const estadoActualRaw = (celdas[idxEstadoActual] || "").toUpperCase().trim(); 
+            const cicloTotalDias = parseFloat(celdas[idxCicloTotal]) || 0;             
+            
+            let etapaExacta = celdas[idxEtapa] ? celdas[idxEtapa].trim() : "Origen";       
+            if (etapaExacta.toUpperCase().includes("DEPOSITO") || etapaExacta.toUpperCase().includes("DEPÓSITO")) {
+                etapaExacta = "Espera Depósito Origen";
+            }
+
+            let estadoVenta = "Sin Vender";
+            if (opGateBuy.trim() !== "" && !opGateBuy.toUpperCase().includes("PENDIEN") && !opGateBuy.toUpperCase().includes("NO")) {
+                estadoVenta = "Vendido";
+            } else if (estadoActualRaw === "RESERVADO" || estadoActualRaw === "ENTREGADO") {
+                estadoVenta = "Vendido";
+            }
+
+            let clasificacionFisicaMapa = "DESTINO"; 
+            const estatusNormalizado = etapaExacta.toUpperCase();
+
+            if (estatusNormalizado.includes("MAR") || estatusNormalizado.includes("TRA")) {
+                clasificacionFisicaMapa = "MAR";
+            } else if (estatusNormalizado.includes("ORIGEN") || estatusNormalizado.includes("ESPERA")) {
+                clasificacionFisicaMapa = "ORIGEN";
+            } else if (estatusNormalizado.includes("DESTINO") || estatusNormalizado.includes("COMPLETADO")) {
+                clasificacionFisicaMapa = "DESTINO";
+            }
+
+            listaProcesada.push({
+                serial: serialContenedor, tipo, opLeasing, opGateBuy, origen, pais: paisRaw, localizacion, confirmacion, eta, color,
+                estadoVenta, etapaFisicaExacta: etapaExacta, clasificacionFisicaMapa, cicloTotalDias
+            });
         }
-    });
+
+        contenedoresGlobales = listaProcesada;
+        inicializarFiltrosYVistas();
+
+    } catch (err) {
+        console.error("Error al obtener los datos:", err);
+    }
 }
 
-// ==========================================================================
-// COMPONENTE CUSTOM SEARCHABLE SELECT
-// ==========================================================================
 function crearCustomSelect(wrapperId, opcionesArray, opcionDefecto, onSelectCallback) {
     const wrapper = document.getElementById(wrapperId);
     if (!wrapper) return;
@@ -258,9 +241,6 @@ document.addEventListener("click", () => {
     document.querySelectorAll(".custom-select-wrapper").forEach(w => w.classList.remove("open"));
 });
 
-// ==========================================================================
-// RENDERIZADO DINÁMICO Y REACTIVO DE LAS TARJETAS DE PAÍS
-// ==========================================================================
 function renderizarTarjetasPaises(listaFiltradaSegunAtributos) {
     const contenedor = document.getElementById("contenedor-tarjetas-paises");
     if (!contenedor) return;
