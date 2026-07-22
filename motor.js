@@ -1,10 +1,8 @@
 // ==========================================================================
-// CONFIGURACIÓN PRO: ENLACE EN VIVO DE TU GOOGLE SHEET CON PROXY ANTI-CORS
+// CONFIGURACIÓN PRO: ENLACE EN VIVO DE TU GOOGLE SHEET (FORMATO CSV)
 // ==========================================================================
 const HOJA_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSkVKm6lOMbZvAxVV_t0SXpXbln6AC67ebiTEc9how0g4ccKvhcZdbZtDoO7eIdla98b1bkYj6reDDo/pub?output=csv";
 
-// Usamos corsproxy.io para evadir la restricción del navegador
-const GOOGLE_SHEET_CSV_URL = "https://corsproxy.io/?" + encodeURIComponent(HOJA_URL);
 // Banderas oficiales por País
 const BANDERAS_PAISES = {
     "ARGENTINA": "https://flagcdn.com/w40/ar.png",
@@ -50,24 +48,6 @@ let filtroTamanoVal = "Todos los Tamaños";
 let filtroEtapaVal = "Todas las Etapas";
 let filtroPrioridadVal = "Todas las Prioridades";
 
-function dividirLineaCSV(linea) {
-    let resultado = [];
-    let dentroDeComillas = false;
-    let celdaActual = "";
-    for (let i = 0; i < linea.length; i++) {
-        let char = linea[i];
-        if (char === '"') dentroDeComillas = !dentroDeComillas;
-        else if (char === ',' && !dentroDeComillas) {
-            resultado.push(celdaActual.trim());
-            celdaActual = "";
-        } else {
-            celdaActual += char;
-        }
-    }
-    resultado.push(celdaActual.trim());
-    return resultado;
-}
-
 function parsearFechaExcel(textoFecha) {
     if(!textoFecha || textoFecha === "--" || textoFecha.trim() === "") return null;
     let limpia = textoFecha.replace(/\//g, "-").trim();
@@ -106,93 +86,98 @@ function obtenerNivelPrioridadContenedor(c, fechaHoy) {
     return "ninguna";
 }
 
-async function cargarDatosDesdeGoogleSheets() {
-    try {
-        const respuesta = await fetch(GOOGLE_SHEET_CSV_URL);
-        if (!respuesta.ok) throw new Error("Fallo al descargar archivo CSV.");
-        
-        const textoCSV = await respuesta.text();
-        const lineas = textoCSV.split("\n");
-        if (lineas.length < 2) return;
-
-        let idxOpLeasing = 0;
-        let idxOpGateBuy = 1;
-        let idxSerial = 2;
-        let idxTipo = 4;
-        let idxColor = 5;
-        let idxOrigen = 7;
-        let idxPais = 8;
-        let idxLocalizacion = 9;
-        let idxConfirmacion = 10;
-        let idxEta = 18;
-        let idxEstadoActual = 23;
-        let idxCicloTotal = 30;
-        let idxEtapa = 32;
-
-        const listaProcesada = [];
-        
-        for (let i = 1; i < lineas.length; i++) {
-            if (!lineas[i].trim()) continue;
-            
-            const lineaLimpia = lineas[i].replace(/\r/g, "").trim();
-            const celdas = dividirLineaCSV(lineaLimpia).map(val => val.replace(/["']/g, "").trim());
-            
-            if (celdas.length < 4) continue;
-
-            const opLeasing = celdas[idxOpLeasing] || "";
-            const opGateBuy = celdas[idxOpGateBuy] || "";         
-            const serialContenedor = celdas[idxSerial] ? celdas[idxSerial].replace(/\s+/g, '') : ""; 
-
-            if (serialContenedor === "" || opLeasing.trim() === "" || serialContenedor.toUpperCase().includes("SERIAL") || serialContenedor.toUpperCase().includes("CONTENEDOR")) {
-                continue; 
-            }
-
-            const tipo = celdas[idxTipo] || "40HC";           
-            const color = celdas[idxColor] || "No Especificado"; 
-            const origen = celdas[idxOrigen] || "CHINA";        
-            let paisRaw = celdas[idxPais] ? celdas[idxPais].toUpperCase().trim() : "NO ESP.";
-            
-            const localizacion = celdas[idxLocalizacion] || "Destino";
-            const confirmacion = celdas[idxConfirmacion] || "";      
-            const eta = celdas[idxEta] || "--";            
-            const estadoActualRaw = (celdas[idxEstadoActual] || "").toUpperCase().trim(); 
-            const cicloTotalDias = parseFloat(celdas[idxCicloTotal]) || 0;             
-            
-            let etapaExacta = celdas[idxEtapa] ? celdas[idxEtapa].trim() : "Origen";       
-            if (etapaExacta.toUpperCase().includes("DEPOSITO") || etapaExacta.toUpperCase().includes("DEPÓSITO")) {
-                etapaExacta = "Espera Depósito Origen";
-            }
-
-            let estadoVenta = "Sin Vender";
-            if (opGateBuy.trim() !== "" && !opGateBuy.toUpperCase().includes("PENDIEN") && !opGateBuy.toUpperCase().includes("NO")) {
-                estadoVenta = "Vendido";
-            } else if (estadoActualRaw === "RESERVADO" || estadoActualRaw === "ENTREGADO") {
-                estadoVenta = "Vendido";
-            }
-
-            let clasificacionFisicaMapa = "DESTINO"; 
-            const estatusNormalizado = etapaExacta.toUpperCase();
-
-            if (estatusNormalizado.includes("MAR") || estatusNormalizado.includes("TRA")) {
-                clasificacionFisicaMapa = "MAR";
-            } else if (estatusNormalizado.includes("ORIGEN") || estatusNormalizado.includes("ESPERA")) {
-                clasificacionFisicaMapa = "ORIGEN";
-            } else if (estatusNormalizado.includes("DESTINO") || estatusNormalizado.includes("COMPLETADO")) {
-                clasificacionFisicaMapa = "DESTINO";
-            }
-
-            listaProcesada.push({
-                serial: serialContenedor, tipo, opLeasing, opGateBuy, origen, pais: paisRaw, localizacion, confirmacion, eta, color,
-                estadoVenta, etapaFisicaExacta: etapaExacta, clasificacionFisicaMapa, cicloTotalDias
-            });
-        }
-
-        contenedoresGlobales = listaProcesada;
-        inicializarFiltrosYVistas();
-
-    } catch (error) {
-        console.error("Error cargando datos:", error);
+// ==========================================================================
+// CARGA DE DATOS ROBUSTA CON PAPAPARSE (ANTI-CORS)
+// ==========================================================================
+function cargarDatosDesdeGoogleSheets() {
+    if (typeof Papa === "undefined") {
+        console.error("PapaParse no está cargado.");
+        return;
     }
+
+    Papa.parse(HOJA_URL, {
+        download: true,
+        header: false,
+        skipEmptyLines: true,
+        complete: function(results) {
+            const lineas = results.data;
+            if (!lineas || lineas.length < 2) return;
+
+            let idxOpLeasing = 0;
+            let idxOpGateBuy = 1;
+            let idxSerial = 2;
+            let idxTipo = 4;
+            let idxColor = 5;
+            let idxOrigen = 7;
+            let idxPais = 8;
+            let idxLocalizacion = 9;
+            let idxConfirmacion = 10;
+            let idxEta = 18;
+            let idxEstadoActual = 23;
+            let idxCicloTotal = 30;
+            let idxEtapa = 32;
+
+            const listaProcesada = [];
+
+            for (let i = 1; i < lineas.length; i++) {
+                const celdas = lineas[i].map(val => String(val || "").replace(/["']/g, "").trim());
+                if (celdas.length < 4) continue;
+
+                const opLeasing = celdas[idxOpLeasing] || "";
+                const opGateBuy = celdas[idxOpGateBuy] || "";         
+                const serialContenedor = celdas[idxSerial] ? celdas[idxSerial].replace(/\s+/g, '') : ""; 
+
+                if (serialContenedor === "" || opLeasing.trim() === "" || serialContenedor.toUpperCase().includes("SERIAL") || serialContenedor.toUpperCase().includes("CONTENEDOR")) {
+                    continue; 
+                }
+
+                const tipo = celdas[idxTipo] || "40HC";           
+                const color = celdas[idxColor] || "No Especificado"; 
+                const origen = celdas[idxOrigen] || "CHINA";        
+                let paisRaw = celdas[idxPais] ? celdas[idxPais].toUpperCase().trim() : "NO ESP.";
+                
+                const localizacion = celdas[idxLocalizacion] || "Destino";
+                const confirmacion = celdas[idxConfirmacion] || "";      
+                const eta = celdas[idxEta] || "--";            
+                const estadoActualRaw = (celdas[idxEstadoActual] || "").toUpperCase().trim(); 
+                const cicloTotalDias = parseFloat(celdas[idxCicloTotal]) || 0;             
+                
+                let etapaExacta = celdas[idxEtapa] ? celdas[idxEtapa].trim() : "Origen";       
+                if (etapaExacta.toUpperCase().includes("DEPOSITO") || etapaExacta.toUpperCase().includes("DEPÓSITO")) {
+                    etapaExacta = "Espera Depósito Origen";
+                }
+
+                let estadoVenta = "Sin Vender";
+                if (opGateBuy.trim() !== "" && !opGateBuy.toUpperCase().includes("PENDIEN") && !opGateBuy.toUpperCase().includes("NO")) {
+                    estadoVenta = "Vendido";
+                } else if (estadoActualRaw === "RESERVADO" || estadoActualRaw === "ENTREGADO") {
+                    estadoVenta = "Vendido";
+                }
+
+                let clasificacionFisicaMapa = "DESTINO"; 
+                const estatusNormalizado = etapaExacta.toUpperCase();
+
+                if (estatusNormalizado.includes("MAR") || estatusNormalizado.includes("TRA")) {
+                    clasificacionFisicaMapa = "MAR";
+                } else if (estatusNormalizado.includes("ORIGEN") || estatusNormalizado.includes("ESPERA")) {
+                    clasificacionFisicaMapa = "ORIGEN";
+                } else if (estatusNormalizado.includes("DESTINO") || estatusNormalizado.includes("COMPLETADO")) {
+                    clasificacionFisicaMapa = "DESTINO";
+                }
+
+                listaProcesada.push({
+                    serial: serialContenedor, tipo, opLeasing, opGateBuy, origen, pais: paisRaw, localizacion, confirmacion, eta, color,
+                    estadoVenta, etapaFisicaExacta: etapaExacta, clasificacionFisicaMapa, cicloTotalDias
+                });
+            }
+
+            contenedoresGlobales = listaProcesada;
+            inicializarFiltrosYVistas();
+        },
+        error: function(err) {
+            console.error("Error al descargar con PapaParse:", err);
+        }
+    });
 }
 
 // ==========================================================================
