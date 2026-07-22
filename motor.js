@@ -1,10 +1,10 @@
 // ==========================================================================
-// CONFIGURACIÓN PRO: ENLACE CON PROXY ANTI-CORS PARA PAPAPARSE
+// CONFIGURACIÓN PRO: ENLACE EN VIVO CON PROXY ANTI-CORS (ALLORIGINS)
 // ==========================================================================
-const URL_ORIGINAL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSkVKm6lOMbZvAxVV_t0SXpXbln6AC67ebiTEc9how0g4ccKvhcZdbZtDoO7eIdla98b1bkYj6reDDo/pub?output=csv";
+const URL_SHEET_ORIGINAL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSkVKm6lOMbZvAxVV_t0SXpXbln6AC67ebiTEc9how0g4ccKvhcZdbZtDoO7eIdla98b1bkYj6reDDo/pub?output=csv";
 
-// Envolvemos la URL con corsproxy.io para engañar al navegador y quitar la restricción CORS de Google
-const HOJA_URL = "https://corsproxy.io/?" + encodeURIComponent(URL_ORIGINAL);
+// Convertimos la llamada a través de un proxy que elimina los bloqueos CORS
+const HOJA_URL = "https://api.allorigins.win/raw?url=" + encodeURIComponent(URL_SHEET_ORIGINAL);
 
 // Banderas oficiales por País
 const BANDERAS_PAISES = {
@@ -90,7 +90,7 @@ function obtenerNivelPrioridadContenedor(c, fechaHoy) {
 }
 
 // ==========================================================================
-// CARGA DE DATOS ROBUSTA CON PAPAPARSE (ANTI-CORS)
+// CARGA DE DATOS ROBUSTA CON PAPAPARSE + ALLORIGINS (ANTI-CORS)
 // ==========================================================================
 function cargarDatosDesdeGoogleSheets() {
     if (typeof Papa === "undefined") {
@@ -178,7 +178,7 @@ function cargarDatosDesdeGoogleSheets() {
             inicializarFiltrosYVistas();
         },
         error: function(err) {
-            console.error("Error al descargar con PapaParse:", err);
+            console.error("Error al descargar los datos:", err);
         }
     });
 }
