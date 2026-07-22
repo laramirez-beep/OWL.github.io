@@ -1,0 +1,436 @@
+/* ==========================================================================
+   TIPOGRAFÍA Y PALETA E-CONTAINERS OFICIAL (DISEÑO ESPACIOSO Y EJECUTIVO)
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap');
+
+:root {
+    --bg-global: #FFFFFF;
+    --bg-tarjeta: #ffffff;
+    --bg-tarjeta-sub: #f8fafc;
+    --brand-blue: #0047ff;
+    --brand-blue-light: rgba(0, 71, 255, 0.08);
+    
+    /* Fuente Industrial Oficial E-Containers */
+    --font-global: 'Rajdhani', -apple-system, sans-serif;
+
+    /* Indicadores Neutros Corporativos */
+    --status-disponible: #0284c7;
+    --status-disponible-bg: #f0f9ff;
+    --status-reservado: #64748b;
+    --status-reservado-bg: #f1f5f9;
+    
+    /* Alertas de Prioridad */
+    --accent-red: #dc2626;
+    --accent-red-bg: #fef2f2;
+    --accent-amber: #b45309;
+    --accent-amber-bg: #fffbeb;
+
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --border-soft: #e2e8f0;
+    --shadow-soft: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0 12px 20px -4px rgba(0, 71, 255, 0.15);
+}
+
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    font-family: var(--font-global) !important;
+}
+
+body {
+    background-color: var(--bg-global);
+    color: var(--text-primary);
+    font-size: 15px;
+    padding: 32px 40px; /* Mayor espacio lateral general */
+    max-width: 1650px;   /* Evita que se desparrame en monitores ultra anchos */
+    margin: 0 auto;
+    line-height: 1.5;
+    letter-spacing: 0.3px;
+}
+
+input, select, button, textarea, option {
+    font-family: var(--font-global) !important;
+}
+
+/* ==========================================================================
+   CABECERA PREMIUM (CON MÁS ESPACIO)
+   ========================================================================== */
+.cabecera-premium {
+    display: flex; 
+    align-items: center; 
+    gap: 24px;
+    background-color: var(--brand-blue);
+    border-radius: 14px; 
+    padding: 20px 32px; 
+    margin-bottom: 32px;
+    box-shadow: 0 10px 24px rgba(0, 71, 255, 0.22); 
+    width: 100%;
+    color: #ffffff;
+}
+
+.contenedor-logo { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    background: transparent;
+    padding: 0;
+    border: none;
+}
+
+.logo-empresa { 
+    height: 64px;
+    width: auto;
+    max-width: 220px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease;
+}
+
+.logo-empresa:hover { transform: scale(1.03); }
+
+.contenedor-titulos { display: flex; flex-direction: column; justify-content: center; flex: 1; }
+.contenedor-titulos h1 { color: #ffffff; font-size: 2.2em; margin: 0 0 2px 0; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+.contenedor-titulos h2 { color: rgba(255, 255, 255, 0.88); font-size: 1.05em; font-weight: 600; margin: 0; letter-spacing: 1px; text-transform: uppercase; }
+
+/* ==========================================================================
+   KPIs GLOBALES (DESPEJADOS YHolgados)
+   ========================================================================== */
+.grid-kpis { 
+    display: grid; 
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 20px; 
+    margin-bottom: 32px; 
+    width: 100%; 
+}
+
+.tarjeta-kpi { 
+    background: var(--bg-tarjeta); 
+    border: 1px solid var(--border-soft); 
+    padding: 22px 24px; 
+    border-radius: 14px; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center;
+    box-shadow: var(--shadow-soft);
+}
+
+.titulo-kpi { font-size: 12px; color: var(--text-muted); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.valor-kpi { font-size: 30px; font-weight: 700; margin-top: 6px; white-space: nowrap; color: var(--text-primary); letter-spacing: 0.5px; }
+.kpi-disponibles { color: var(--status-disponible); }
+.kpi-reservado { color: var(--status-reservado); }
+.kpi-azul { color: var(--brand-blue); }
+
+/* ==========================================================================
+   SECCIÓN DE FILTROS SUPERIORES (MÁS AIRE ENTRE BÚSQUEDA Y SELECTORES)
+   ========================================================================== */
+.seccion-filtros { 
+    background: var(--bg-tarjeta); 
+    border: 1px solid var(--border-soft); 
+    border-radius: 14px; 
+    padding: 24px 28px; 
+    margin-bottom: 32px; 
+    width: 100%; 
+    box-shadow: var(--shadow-soft);
+}
+
+.barra-busqueda-contenedor { display: flex; gap: 16px; margin-bottom: 20px; }
+.barra-busqueda-contenedor input { 
+    flex: 1; 
+    background: var(--bg-tarjeta-sub); 
+    border: 1px solid var(--border-soft); 
+    border-radius: 10px; 
+    padding: 14px 18px; 
+    color: var(--text-primary); 
+    font-size: 15px; 
+    font-weight: 600;
+}
+.barra-busqueda-contenedor input:focus { outline: 2px solid var(--brand-blue); border-color: transparent; }
+
+.btn-reset { 
+    background: #fef2f2; 
+    color: var(--accent-red); 
+    border: 1px solid #fecaca; 
+    border-radius: 10px; 
+    padding: 0 24px; 
+    font-weight: 700; 
+    font-size: 13px; 
+    cursor: pointer; 
+    transition: all 0.2s; 
+}
+.btn-reset:hover { background: #fee2e2; }
+
+.selectores-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsivo para no apretar los filtros */
+    gap: 16px; 
+    margin-bottom: 20px; 
+}
+
+.control-filtro { display: flex; flex-direction: column; gap: 8px; position: relative; }
+.control-filtro label { font-size: 12px; color: var(--text-secondary); font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; }
+
+/* ==========================================================================
+   ESTILOS DEL COMPONENTE SELECT BUSCABLE CUSTOM (MÁS CÓMODO AL CLIC)
+   ========================================================================== */
+.custom-select-wrapper {
+    position: relative;
+    user-select: none;
+}
+
+.custom-select-trigger {
+    background: var(--bg-tarjeta-sub);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.custom-select-wrapper.open .custom-select-trigger {
+    border-color: var(--brand-blue);
+    box-shadow: 0 0 0 3px rgba(0, 71, 255, 0.12);
+}
+
+.custom-select-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.custom-select-arrow {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-left: 8px;
+    transition: transform 0.2s ease;
+}
+
+.custom-select-wrapper.open .custom-select-arrow {
+    transform: rotate(180deg);
+}
+
+.custom-select-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: var(--bg-tarjeta);
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.custom-select-wrapper.open .custom-select-dropdown {
+    display: block;
+    animation: fadeInDropdown 0.15s ease-out;
+}
+
+@keyframes fadeInDropdown {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.custom-select-search {
+    padding: 10px;
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--bg-tarjeta-sub);
+}
+
+.custom-select-search input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    outline: none;
+}
+
+.custom-select-search input:focus {
+    border-color: var(--brand-blue);
+}
+
+.custom-select-options {
+    max-height: 220px;
+    overflow-y: auto;
+    padding: 6px 0;
+}
+
+.custom-option {
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background 0.15s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.custom-option:hover, .custom-option.selected {
+    background: var(--brand-blue-light);
+    color: var(--brand-blue);
+    font-weight: 700;
+}
+
+.custom-option.no-result {
+    color: var(--text-muted);
+    font-style: italic;
+    cursor: default;
+}
+
+.custom-select-options::-webkit-scrollbar { width: 5px; }
+.custom-select-options::-webkit-scrollbar-track { background: transparent; }
+.custom-select-options::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+/* ==========================================================================
+   BOTONERA COMERCIAL Y SECCIONES
+   ========================================================================== */
+.botones-comerciales-contenedor { 
+    display: flex; 
+    gap: 12px; 
+    border-top: 1px solid var(--border-soft); 
+    padding-top: 20px; 
+}
+
+.btn-filtro-premium { 
+    background: var(--bg-tarjeta-sub); 
+    border: 1px solid var(--border-soft); 
+    color: var(--text-secondary); 
+    padding: 12px 24px; 
+    border-radius: 10px; 
+    cursor: pointer; 
+    font-weight: 700; 
+    font-size: 13px; 
+    letter-spacing: 1px;
+    transition: all 0.2s ease; 
+}
+.btn-filtro-premium:hover { background: #e2e8f0; }
+.btn-filtro-premium.activo { 
+    background: var(--brand-blue); 
+    border-color: var(--brand-blue); 
+    color: #ffffff; 
+    box-shadow: 0 4px 14px rgba(0, 71, 255, 0.3); 
+}
+
+/* ==========================================================================
+   HUB REGIONAL DE PAÍSES (TARJETAS HOLGADAS)
+   ========================================================================== */
+.seccion-paises-hub { margin-bottom: 36px; }
+
+.grid-tarjetas-paises { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
+    gap: 20px; 
+    margin-top: 16px; 
+}
+
+.tarjeta-pais-card { 
+    background: var(--bg-tarjeta); 
+    border: 1px solid var(--border-soft); 
+    border-radius: 14px; 
+    padding: 20px; 
+    cursor: pointer; 
+    transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1); 
+    box-shadow: var(--shadow-soft); 
+}
+
+.tarjeta-pais-card:hover { transform: translateY(-4px); border-color: var(--brand-blue); box-shadow: var(--shadow-hover); }
+.tarjeta-pais-card.pais-opaco { opacity: 0.35; }
+.tarjeta-pais-card.pais-seleccionado-activo { 
+    opacity: 1 !important; 
+    border: 2px solid var(--brand-blue) !important; 
+    background: #f0f5ff !important; 
+    box-shadow: 0 8px 22px rgba(0, 71, 255, 0.18) !important; 
+    transform: scale(1.02); 
+}
+
+.cabecera-pais-card { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.info-pais-flex { display: flex; align-items: center; gap: 12px; }
+.bandera-pais-img { width: 32px; height: 22px; object-fit: cover; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.15); }
+.nombre-pais-card { font-size: 16px; font-weight: 700; color: var(--text-primary); letter-spacing: 0.8px; }
+.badge-total-pais { background: var(--bg-tarjeta-sub); color: var(--text-secondary); border: 1px solid var(--border-soft); font-size: 12px; padding: 4px 10px; border-radius: 12px; font-weight: 700; }
+
+.metricas-pais-card { 
+    display: flex; 
+    justify-content: space-between; 
+    background: var(--bg-tarjeta-sub); 
+    border: 1px solid var(--border-soft); 
+    border-radius: 10px; 
+    padding: 10px 16px; 
+}
+.sub-metrica-pais { display: flex; flex-direction: column; }
+.sub-metrica-pais span { font-size: 20px; font-weight: 700; }
+.sub-metrica-pais small { font-size: 11px; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; }
+
+.num-libres { color: var(--status-disponible); }
+.num-vendidos { color: var(--status-reservado); }
+
+/* ==========================================================================
+   SECCIÓN DE LOTES
+   ========================================================================== */
+.seccion-lotes-principal { margin-bottom: 36px; }
+.subtitulo-seccion-lotes { margin-bottom: 16px; }
+.badge-subtitulo { background: var(--brand-blue-light); color: var(--brand-blue); border: 1px solid rgba(0, 71, 255, 0.25); padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 700; letter-spacing: 1px; }
+
+.grid-tarjetas-lotes { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+    gap: 20px; 
+}
+
+/* ==========================================================================
+   TABLA MAESTRA INFERIOR (FILAS ESPACIOSAS)
+   ========================================================================== */
+.seccion-tabla-maestra { 
+    background: var(--bg-tarjeta); 
+    border: 1px solid var(--border-soft); 
+    border-radius: 14px; 
+    padding: 24px; 
+    width: 100%; 
+    box-shadow: var(--shadow-soft); 
+}
+
+.contenedor-overflow-tabla { overflow-x: auto; }
+.tabla-maestra-containers { width: 100%; border-collapse: collapse; font-size: 14px; text-align: left; }
+.tabla-maestra-containers th { 
+    background: var(--bg-tarjeta-sub); 
+    color: var(--brand-blue); 
+    padding: 14px 18px; 
+    font-weight: 700; 
+    font-size: 12px; 
+    border-bottom: 2px solid var(--border-soft); 
+    letter-spacing: 1px; 
+}
+
+.tabla-maestra-containers td { 
+    padding: 14px 18px; 
+    border-bottom: 1px solid var(--border-soft); 
+    color: var(--text-secondary); 
+    font-weight: 600; 
+}
+
+.tabla-maestra-containers tr:hover td { background: var(--bg-tarjeta-sub); }
+
+.badge-venta { display: inline-block; padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; }
+.badge-venta.disponible { background: var(--status-disponible-bg); color: var(--status-disponible); border: 1px solid rgba(2, 132, 199, 0.2); }
+.badge-venta.vendido { background: var(--status-reservado-bg); color: var(--status-reservado); border: 1px solid var(--border-soft); }
+
+/* PRIORIDADES COMERCIALES */
+.tarjeta-prioridad-alta { border-left: 6px solid var(--accent-red) !important; }
+.badge-prioridad-alta { background: var(--accent-red-bg); color: var(--accent-red); border: 1px solid rgba(220, 38, 38, 0.2); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+.badge-prioridad-media { background: var(--accent-amber-bg); color: var(--accent-amber); border: 1px solid rgba(180, 83, 9, 0.2); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; }

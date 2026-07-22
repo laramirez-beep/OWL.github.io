@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E - Containers Global | Matriz Comercial</title>
+    
+    <!-- 🔥 ÍCONO DE LA PESTAÑA (FAVICON) -->
+    <link rel="icon" type="image/png" href="favicon.png">
+    
+    <!-- IMPORTACIÓN DE FUENTE INDUSTRIAL RAJDHANI -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+    <!-- CABECERA CORPORATIVA PREMIUM CON LOGO OFICIAL (logo.png) -->
+    <header class="cabecera-premium">
+        <div class="contenedor-logo">
+            <img src="logo.png" alt="E-Containers Global" class="logo-empresa">
+        </div>
+        <div class="contenedor-titulos">
+            <h1>E - CONTAINERS GLOBAL</h1>
+            <h2>MATRIZ COMERCIAL - PANEL DE CONTROL GATE BUY</h2>
+        </div>
+    </header>
+
+    <!-- METRICAS DE OPERACION (KPIs NEUTROS) -->
+    <section class="grid-kpis">
+        <div class="tarjeta-kpi">
+            <span class="titulo-kpi">UNIDADES FLOTA ACTUAL</span>
+            <div id="kpi-unidades" class="valor-kpi">0 Unidades</div>
+        </div>
+        <div class="tarjeta-kpi">
+            <span class="titulo-kpi">DISPONIBILIDAD COMERCIAL</span>
+            <div id="kpi-disponibles" class="valor-kpi kpi-disponibles">0 Libres</div>
+        </div>
+        <div class="tarjeta-kpi">
+            <span class="titulo-kpi">COLOCACIÓN EN MERCADO</span>
+            <div id="kpi-vendidos" class="valor-kpi kpi-reservado">0 Vendidas</div>
+        </div>
+        <div class="tarjeta-kpi">
+            <span class="titulo-kpi">PROMEDIO CICLO TOTAL</span>
+            <div id="kpi-ciclo" class="valor-kpi kpi-azul">0.0 Días</div>
+        </div>
+    </section>
+
+    <!-- FILTROS CON DESPLEGABLES BUSCABLES CUSTOM (SEARCHABLE SELECTS) -->
+    <section class="seccion-filtros">
+        <div class="barra-busqueda-contenedor">
+            <input type="text" id="buscar-operacion" placeholder="🔍 BUSCAR POR SERIAL O OP GATE BUY...">
+            <button id="btn-reset-filtros" class="btn-reset">LIMPIAR FILTROS</button>
+        </div>
+        
+        <div class="selectores-grid">
+            <!-- FILTRO PAÍS -->
+            <div class="control-filtro">
+                <label>País</label>
+                <div class="custom-select-wrapper" id="custom-select-pais">
+                    <div class="custom-select-trigger">
+                        <span class="custom-select-label">Todos los Países</span>
+                        <span class="custom-select-arrow">⬍</span>
+                    </div>
+                    <div class="custom-select-dropdown">
+                        <div class="custom-select-search">
+                            <input type="text" placeholder="Buscar país..." class="search-input">
+                        </div>
+                        <div class="custom-select-options"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTRO LOCACIÓN -->
+            <div class="control-filtro">
+                <label>Locación</label>
+                <div class="custom-select-wrapper" id="custom-select-locacion">
+                    <div class="custom-select-trigger">
+                        <span class="custom-select-label">Todas las Locaciones</span>
+                        <span class="custom-select-arrow">⬍</span>
+                    </div>
+                    <div class="custom-select-dropdown">
+                        <div class="custom-select-search">
+                            <input type="text" placeholder="Buscar locación..." class="search-input">
+                        </div>
+                        <div class="custom-select-options"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTRO TAMAÑO -->
+            <div class="control-filtro">
+                <label>Tamaño</label>
+                <div class="custom-select-wrapper" id="custom-select-tamano">
+                    <div class="custom-select-trigger">
+                        <span class="custom-select-label">Todos los Tamaños</span>
+                        <span class="custom-select-arrow">⬍</span>
+                    </div>
+                    <div class="custom-select-dropdown">
+                        <div class="custom-select-search">
+                            <input type="text" placeholder="Buscar tamaño..." class="search-input">
+                        </div>
+                        <div class="custom-select-options"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTRO ETAPA -->
+            <div class="control-filtro">
+                <label>Etapa</label>
+                <div class="custom-select-wrapper" id="custom-select-etapa">
+                    <div class="custom-select-trigger">
+                        <span class="custom-select-label">Todas las Etapas</span>
+                        <span class="custom-select-arrow">⬍</span>
+                    </div>
+                    <div class="custom-select-dropdown">
+                        <div class="custom-select-search">
+                            <input type="text" placeholder="Buscar etapa..." class="search-input">
+                        </div>
+                        <div class="custom-select-options"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTRO PRIORIDAD -->
+            <div class="control-filtro">
+                <label>Prioridad</label>
+                <div class="custom-select-wrapper" id="custom-select-prioridad">
+                    <div class="custom-select-trigger">
+                        <span class="custom-select-label">Todas las Prioridades</span>
+                        <span class="custom-select-arrow">⬍</span>
+                    </div>
+                    <div class="custom-select-dropdown">
+                        <div class="custom-select-search">
+                            <input type="text" placeholder="Buscar prioridad..." class="search-input">
+                        </div>
+                        <div class="custom-select-options"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="botones-comerciales-contenedor">
+            <button id="btn-filtro-todos" class="btn-filtro-premium activo">TODOS LOS EQUIPOS</button>
+            <button id="btn-filtro-disponibles" class="btn-filtro-premium">DISPONIBLES VENTA</button>
+            <button id="btn-filtro-vendidos" class="btn-filtro-premium">RESERVADOS / VENDIDOS</button>
+        </div>
+    </section>
+
+    <!-- SECCIÓN DE TARJETAS FLOTANTES POR PAÍS -->
+    <section class="seccion-paises-hub">
+        <div class="subtitulo-seccion-lotes">
+            <span class="badge-subtitulo">HUB REGIONAL DE PAÍSES</span>
+        </div>
+        <div id="contenedor-tarjetas-paises" class="grid-tarjetas-paises">
+            <!-- Inyección dinámica desde motor.js -->
+        </div>
+    </section>
+
+    <!-- VISTA PRINCIPAL DE LOTES -->
+    <section class="seccion-lotes-principal">
+        <div class="subtitulo-seccion-lotes">
+            <span class="badge-subtitulo" id="titulo-lotes-seccion">LOTES COMERCIALIZABLES</span>
+        </div>
+        <div id="contenedor-tarjetas-comerciales" class="grid-tarjetas-lotes">
+            <!-- Inyección dinámica desde motor.js -->
+        </div>
+    </section>
+
+    <!-- TABLA MAESTRA INFERIOR DE DETALLES (CON ETA) -->
+    <section class="seccion-tabla-maestra">
+        <div class="contenedor-overflow-tabla">
+            <table class="tabla-maestra-containers">
+                <thead>
+                    <tr>
+                        <th>SERIAL</th>
+                        <th>TAMAÑO</th>
+                        <th>COLOR</th>
+                        <th>OP GATE BUY</th>
+                        <th>DESTINO</th>
+                        <th>ETA</th>
+                        <th>ESTADO (AF)</th>
+                        <th>OPORTUNIDAD COMERCIAL</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpo-tabla-contenedores">
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <script src="motor.js"></script>
+</body>
+</html>
