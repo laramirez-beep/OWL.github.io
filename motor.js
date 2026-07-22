@@ -1,3 +1,4 @@
+function initializeFiltrosYVistasCustom() {
 // ==========================================================================
 // CONFIGURACIÓN PRO: ENLACE EN VIVO DE TU GOOGLE SHEET (FORMATO DATOS CSV)
 // ==========================================================================
